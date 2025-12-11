@@ -14,6 +14,7 @@
 */
 
 #pragma once
+#include "utilities/gpu_vector.cuh"
 #include "mc_ensemble_canonical.cuh"
 
 class MC_Ensemble_TFMC : public MC_Ensemble_Canonical
@@ -30,4 +31,8 @@ public:
     std::vector<Group>& group,
     int grouping_method,
     int group_id);
+
+private:
+  double displacement_max = 0.1; // maximum displacement length (Angstrom)
+  GPU_Vector<double> position_trial; // buffer for trial positions
 };
