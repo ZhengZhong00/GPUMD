@@ -19,6 +19,7 @@ The driver class for the various MC ensembles.
 
 #include "mc.cuh"
 #include "mc_ensemble_canonical.cuh"
+#include "mc_ensemble_tfmc.cuh"
 #include "mc_ensemble_sgc.cuh"
 #include "model/atom.cuh"
 #include "utilities/common.cuh"
@@ -219,6 +220,9 @@ void MC::parse_mc(const char** param, int num_param, std::vector<Group>& groups,
   } else if (strcmp(param[1], "vcsgc") == 0) {
     printf("Perform VCSGC MCMD:\n");
     mc_ensemble_type = 2;
+  } else if (strcmp(param[1], "tfmc") == 0) {
+    printf("Perform TFMC MCMD:\n");
+    mc_ensemble_type = 3;
   } else {
     PRINT_INPUT_ERROR("invalid MC ensemble for MCMD.\n");
   }
@@ -327,6 +331,9 @@ void MC::parse_mc(const char** param, int num_param, std::vector<Group>& groups,
     check_species_sgc(groups, atom);
     mc_ensemble.reset(new MC_Ensemble_SGC(
       param, num_param, num_steps_mc, true, species, types, num_atoms_species, mu_or_phi, kappa));
+  } else if (mc_ensemble_type == 3) {
+    check_species_canonical(groups, atom);
+    mc_ensemble.reset(new MC_Ensemble_TFMC(param, num_param, num_steps_mc));
   }
 
   do_mcmd = true;
